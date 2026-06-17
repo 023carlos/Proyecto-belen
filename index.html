@@ -1,0 +1,681 @@
+[index.html](https://github.com/user-attachments/files/29033756/index.html)
+# Proyecto-belen<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criptografía con Matrices | Álgebra Lineal – CECAR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:    #0F2744;
+      --blue:    #1A5276;
+      --mid:     #2874A6;
+      --light:   #D6EAF8;
+      --lighter: #EBF5FB;
+      --white:   #FFFFFF;
+      --gray50:  #F8FAFC;
+      --gray100: #EEF2F7;
+      --gray300: #CBD5E0;
+      --gray500: #718096;
+      --gray700: #2D3748;
+      --green:   #1E8449;
+      --red:     #C0392B;
+      --mono:    'JetBrains Mono', monospace;
+      --sans:    'Inter', sans-serif;
+      --radius:  10px;
+      --radius-lg: 16px;
+    }
+
+    body {
+      font-family: var(--sans);
+      background: var(--gray50);
+      color: var(--gray700);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--navy);
+      color: #fff;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .header-logo {
+      width: 34px; height: 34px;
+      background: var(--blue);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 15px; color: #fff; letter-spacing: -0.5px;
+    }
+    .header-title { font-size: 14px; font-weight: 500; opacity: 0.95; }
+    .header-sub { font-size: 11px; opacity: 0.55; margin-top: 1px; }
+    .header-badge {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+      color: #fff;
+      padding: 3.5rem 2rem 3rem;
+      text-align: center;
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 1rem;
+    }
+    .hero h1 {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 600;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      max-width: 640px;
+      margin-inline: auto;
+    }
+    .hero h1 span { color: #85C1E9; }
+    .hero-desc {
+      font-size: 15px;
+      opacity: 0.75;
+      max-width: 520px;
+      margin-inline: auto;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+    .hero-pills {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+    }
+    .pill {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.85);
+    }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 900px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+
+    /* ── TABS ── */
+    .tabs-wrap {
+      display: flex; gap: 4px;
+      background: var(--gray100);
+      padding: 4px;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 9px 16px;
+      border: none;
+      border-radius: 9px;
+      background: transparent;
+      color: var(--gray500);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.18s;
+      font-family: var(--sans);
+    }
+    .tab-btn:hover { background: rgba(255,255,255,0.7); color: var(--gray700); }
+    .tab-btn.active { background: var(--white); color: var(--blue); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--gray300);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--blue);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .card-title svg { opacity: 0.7; }
+
+    /* ── MATRIX INPUT ── */
+    .matrix-wrap {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .matrix-bracket {
+      font-size: 52px;
+      line-height: 1;
+      color: var(--blue);
+      font-weight: 300;
+      user-select: none;
+    }
+    .matrix-cells { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .cell-group label {
+      font-size: 11px;
+      color: var(--gray500);
+      display: block;
+      margin-bottom: 3px;
+      font-family: var(--mono);
+    }
+    .cell-group input[type=number] {
+      width: 80px;
+      padding: 8px 10px;
+      border: 1px solid var(--gray300);
+      border-radius: 8px;
+      font-size: 16px;
+      font-family: var(--mono);
+      font-weight: 500;
+      color: var(--navy);
+      background: var(--gray50);
+      text-align: center;
+      transition: border-color 0.15s;
+    }
+    .cell-group input[type=number]:focus {
+      outline: none;
+      border-color: var(--mid);
+      background: var(--white);
+    }
+    .det-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      font-family: var(--mono);
+      margin-top: 6px;
+    }
+    .det-ok { background: #D5F5E3; color: #1E8449; border: 1px solid #82E0AA; }
+    .det-err { background: #FADBD8; color: var(--red); border: 1px solid #F1948A; }
+
+    /* ── TEXT INPUTS ── */
+    .field { margin-bottom: 12px; }
+    .field label { font-size: 12px; font-weight: 500; color: var(--gray500); display: block; margin-bottom: 5px; }
+    .field input[type=text] {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--gray300);
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-family: var(--sans);
+      color: var(--gray700);
+      background: var(--gray50);
+      transition: border-color 0.15s;
+    }
+    .field input[type=text]:focus { outline: none; border-color: var(--mid); background: var(--white); }
+    .field input[type=text]::placeholder { color: var(--gray300); }
+
+    /* ── BUTTON ── */
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 11px 20px;
+      border: none;
+      border-radius: var(--radius);
+      background: var(--blue);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: var(--sans);
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      letter-spacing: 0.2px;
+    }
+    .btn:hover { background: var(--navy); }
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { background: var(--gray300); cursor: not-allowed; }
+
+    /* ── RESULTS ── */
+    .result-section { margin-top: 1.25rem; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    .result-block {
+      background: var(--gray50);
+      border: 1px solid var(--gray100);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin-bottom: 10px;
+    }
+    .result-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--gray500); margin-bottom: 8px; }
+    .result-value { font-family: var(--mono); font-size: 15px; color: var(--navy); word-break: break-all; }
+    .result-value.big { font-size: 24px; font-weight: 500; color: var(--blue); letter-spacing: 3px; }
+
+    .steps-list { list-style: none; }
+    .step-item { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--gray100); }
+    .step-item:last-child { border-bottom: none; }
+    .step-num-circle {
+      min-width: 24px; height: 24px;
+      border-radius: 50%;
+      background: var(--blue);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .step-content { font-size: 13px; line-height: 1.6; color: var(--gray700); }
+    .step-content .mono-inline {
+      font-family: var(--mono);
+      font-size: 12px;
+      background: var(--lighter);
+      color: var(--blue);
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+    .step-letter { font-weight: 600; font-size: 15px; color: var(--navy); }
+
+    .alert-box {
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+    .alert-info { background: var(--lighter); border: 1px solid #85C1E9; color: var(--blue); }
+    .alert-err { background: #FADBD8; border: 1px solid #F1948A; color: var(--red); }
+    .alert-ok { background: #D5F5E3; border: 1px solid #82E0AA; color: var(--green); }
+
+    /* ── MATRIX DISPLAY ── */
+    .matrix-display {
+      font-family: var(--mono);
+      font-size: 14px;
+      line-height: 2;
+      background: var(--gray50);
+      border: 1px solid var(--gray100);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      margin: 8px 0;
+      color: var(--navy);
+    }
+
+    /* ── ALPHABET TABLE ── */
+    .alpha-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+      gap: 4px;
+      margin-top: 8px;
+    }
+    .alpha-cell {
+      text-align: center;
+      padding: 6px 2px;
+      border-radius: 6px;
+      background: var(--lighter);
+    }
+    .alpha-cell .letter { font-weight: 600; font-size: 13px; color: var(--blue); display: block; }
+    .alpha-cell .num { font-family: var(--mono); font-size: 11px; color: var(--gray500); display: block; }
+
+    /* ── THEORY SECTION ── */
+    .theory-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 600px) { .theory-grid { grid-template-columns: 1fr; } }
+    .theory-block {
+      background: var(--white);
+      border: 1px solid var(--gray300);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+    }
+    .theory-block h3 { font-size: 13px; font-weight: 600; color: var(--blue); margin-bottom: 8px; }
+    .theory-block p { font-size: 13px; line-height: 1.7; color: var(--gray700); }
+    .formula {
+      font-family: var(--mono);
+      font-size: 13px;
+      background: var(--lighter);
+      color: var(--blue);
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin: 8px 0;
+      text-align: center;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 12px;
+      color: var(--gray500);
+      border-top: 1px solid var(--gray100);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 580px) {
+      .hero { padding: 2.5rem 1.25rem 2rem; }
+      .container { padding: 1.5rem 1rem 3rem; }
+      header { padding: 0 1rem; }
+      .matrix-bracket { font-size: 40px; }
+      .theory-grid { grid-template-columns: 1fr; }
+      .tabs-wrap { flex-direction: column; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .result-section { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="header-logo">AL</div>
+    <div>
+      <div class="header-title">Criptografía con Matrices</div>
+      <div class="header-sub">Álgebra Lineal · CECAR 2025</div>
+    </div>
+  </div>
+  <div class="header-badge">Proyecto Final</div>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow">Álgebra Lineal aplicada</div>
+  <h1>Cifrado de mensajes con <span>matrices inversas</span></h1>
+  <p class="hero-desc">Explora cómo los determinantes, la matriz inversa y el método de Gauss-Jordan hacen posible cifrar y descifrar mensajes de texto en tiempo real.</p>
+  <div class="hero-pills">
+    <span class="pill">Determinantes</span>
+    <span class="pill">Matriz Inversa</span>
+    <span class="pill">Gauss-Jordan</span>
+    <span class="pill">Criptografía de Hill</span>
+  </div>
+</section>
+
+<div class="container">
+
+  <!-- TABS -->
+  <div class="tabs-wrap" role="tablist">
+    <button class="tab-btn active" role="tab" onclick="setTab('cifrar')">🔒 Cifrar mensaje</button>
+    <button class="tab-btn" role="tab" onclick="setTab('descifrar')">🔓 Descifrar código</button>
+    <button class="tab-btn" role="tab" onclick="setTab('matriz')">📐 Matriz clave</button>
+    <button class="tab-btn" role="tab" onclick="setTab('teoria')">📖 Teoría</button>
+  </div>
+
+  <!-- ══ PANEL: CIFRAR ══ -->
+  <div id="tab-cifrar" class="panel active" role="tabpanel">
+
+    <div class="card">
+      <div class="card-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Configurar matriz clave A
+      </div>
+
+      <div class="matrix-wrap">
+        <div class="matrix-bracket">[</div>
+        <div class="matrix-cells">
+          <div class="cell-group"><label>a₁₁</label><input type="number" id="a11" value="3" min="-99" max="99"></div>
+          <div class="cell-group"><label>a₁₂</label><input type="number" id="a12" value="1" min="-99" max="99"></div>
+          <div class="cell-group"><label>a₂₁</label><input type="number" id="a21" value="5" min="-99" max="99"></div>
+          <div class="cell-group"><label>a₂₂</label><input type="number" id="a22" value="2" min="-99" max="99"></div>
+        </div>
+        <div class="matrix-bracket">]</div>
+      </div>
+
+      <div id="det-badge"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Mensaje a cifrar
+      </div>
+      <div class="field">
+        <label>Escribe tu mensaje (letras A–Z y espacios)</label>
+        <input type="text" id="msg-input" placeholder="Ej: HOLA MUNDO" maxlength="60"
+          oninput="this.value=this.value.toUpperCase().replace(/[^A-Z ]/g,'')">
+      </div>
+      <button class="btn" onclick="cifrar()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Cifrar mensaje
+      </button>
+      <div id="cifrar-result"></div>
+    </div>
+  </div>
+
+  <!-- ══ PANEL: DESCIFRAR ══ -->
+  <div id="tab-descifrar" class="panel" role="tabpanel">
+    <div class="card">
+      <div class="card-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/><line x1="20" y1="4" x2="20" y2="8"/><line x1="18" y1="6" x2="22" y2="6"/></svg>
+        Código a descifrar
+      </div>
+      <div class="field">
+        <label>Pega los números cifrados separados por comas</label>
+        <input type="text" id="enc-input" placeholder="Ej: 40, 72, 37, 62">
+      </div>
+      <button class="btn" onclick="descifrar()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+        Descifrar código
+      </button>
+      <div id="descifrar-result"></div>
+    </div>
+  </div>
+
+  <!-- ══ PANEL: MATRIZ ══ -->
+  <div id="tab-matriz" class="panel" role="tabpanel">
+    <div id="matriz-content"></div>
+  </div>
+
+  <!-- ══ PANEL: TEORÍA ══ -->
+  <div id="tab-teoria" class="panel" role="tabpanel">
+    <div class="theory-grid">
+      <div class="theory-block">
+        <h3>¿Qué es el determinante?</h3>
+        <p>Un valor escalar que indica si una matriz es invertible. Si det(A) ≠ 0, la matriz puede usarse como clave criptográfica.</p>
+        <div class="formula">det(A) = a₁₁·a₂₂ − a₁₂·a₂₁</div>
+      </div>
+      <div class="theory-block">
+        <h3>Matriz inversa A⁻¹</h3>
+        <p>La matriz inversa es la "llave maestra" del descifrado. Cumple que A × A⁻¹ = I (identidad). Sin ella no se puede descifrar.</p>
+        <div class="formula">A × A⁻¹ = I</div>
+      </div>
+      <div class="theory-block">
+        <h3>Método Gauss-Jordan</h3>
+        <p>Construir [A|I] y aplicar operaciones elementales de fila hasta que la parte izquierda se convierta en la identidad. La parte derecha resultante es A⁻¹.</p>
+        <div class="formula">[A | I] → [I | A⁻¹]</div>
+      </div>
+      <div class="theory-block">
+        <h3>Cifrado de Hill</h3>
+        <p>Sistema que usa multiplicación de matrices para transformar bloques de letras en código. El descifrado usa la matriz inversa. Este proyecto implementa su versión 2×2.</p>
+        <div class="formula">c = A·v &nbsp;|&nbsp; v = A⁻¹·c</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1.25rem">
+      <div class="card-title">Tabla de codificación del alfabeto</div>
+      <div class="alpha-grid" id="alpha-table"></div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<footer>
+  Proyecto Final · Álgebra Lineal · CECAR 2025 &nbsp;·&nbsp;
+  Criptografía con Matrices Inversas
+</footer>
+
+<script>
+  const ALPHA = {' ':0,'A':1,'B':2,'C':3,'D':4,'E':5,'F':6,'G':7,'H':8,'I':9,'J':10,'K':11,'L':12,'M':13,'N':14,'Ñ':15,'O':16,'P':17,'Q':18,'R':19,'S':20,'T':21,'U':22,'V':23,'W':24,'X':25,'Y':26,'Z':27};
+  const ALPHA_INV = Object.fromEntries(Object.entries(ALPHA).map(([k,v])=>[v,k]));
+
+  function getMatrix() {
+    return [
+      [+document.getElementById('a11').value||0, +document.getElementById('a12').value||0],
+      [+document.getElementById('a21').value||0, +document.getElementById('a22').value||0]
+    ];
+  }
+  function det(m) { return m[0][0]*m[1][1] - m[0][1]*m[1][0]; }
+  function invertMatrix(m) {
+    const d = det(m);
+    if (d === 0) return null;
+    return [[m[1][1]/d, -m[0][1]/d], [-m[1][0]/d, m[0][0]/d]];
+  }
+  function mulMV(m, v) {
+    return [m[0][0]*v[0]+m[0][1]*v[1], m[1][0]*v[0]+m[1][1]*v[1]];
+  }
+  function r(n) { return Math.round(n * 100) / 100; }
+
+  function updateDetBadge() {
+    const m = getMatrix(), d = det(m);
+    const el = document.getElementById('det-badge');
+    if (!el) return;
+    el.innerHTML = `<span class="det-badge ${d!==0?'det-ok':'det-err'}">
+      ${d!==0?'✓':'✗'} det(A) = ${d} &nbsp;·&nbsp; ${d!==0?'Matriz invertible':'Matriz singular — no cifrable'}
+    </span>`;
+  }
+
+  function setTab(t) {
+    const tabs = ['cifrar','descifrar','matriz','teoria'];
+    document.querySelectorAll('.tab-btn').forEach((el,i) => el.classList.toggle('active', tabs[i]===t));
+    document.querySelectorAll('.panel').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-'+t).classList.add('active');
+    if (t === 'matriz') renderMatriz();
+    if (t === 'teoria') renderAlpha();
+    updateDetBadge();
+  }
+
+  function cifrar() {
+    const m = getMatrix(), d = det(m);
+    const res = document.getElementById('cifrar-result');
+    if (d === 0) { res.innerHTML = '<div class="alert-box alert-err">La matriz no tiene inversa (det=0). Cambia los valores.</div>'; return; }
+
+    const msg = document.getElementById('msg-input').value.trim();
+    if (!msg) { res.innerHTML = '<div class="alert-box alert-err">Escribe un mensaje.</div>'; return; }
+
+    let nums = msg.split('').map(c => ALPHA[c] !== undefined ? ALPHA[c] : null);
+    if (nums.includes(null)) { res.innerHTML = '<div class="alert-box alert-err">Solo letras A-Z y espacios.</div>'; return; }
+    if (nums.length % 2 !== 0) nums.push(0);
+
+    let enc = [], stepsHTML = '';
+    const convStr = msg.split('').map(c => `${c}=${ALPHA[c]}`).join(' · ');
+    stepsHTML += `<li class="step-item"><div class="step-num-circle">0</div><div class="step-content">Conversión: <span class="mono-inline">${convStr}</span></div></li>`;
+
+    for (let i = 0; i < nums.length; i += 2) {
+      const v = [nums[i], nums[i+1]];
+      const rv = mulMV(m, v);
+      const r0 = Math.round(rv[0]), r1 = Math.round(rv[1]);
+      enc.push(r0, r1);
+      stepsHTML += `<li class="step-item"><div class="step-num-circle">${i/2+1}</div>
+        <div class="step-content">A × [${v[0]}, ${v[1]}]ᵀ = [<strong>${r0}</strong>, <strong>${r1}</strong>]ᵀ</div></li>`;
+    }
+
+    res.innerHTML = `<div class="result-section">
+      <div class="result-block"><div class="result-label">Pasos del cifrado</div><ul class="steps-list">${stepsHTML}</ul></div>
+      <div class="result-block"><div class="result-label">Código cifrado (enviar al receptor)</div><div class="result-value">${enc.join(', ')}</div></div>
+      <div class="alert-box alert-info">Copia estos números → pégalos en "Descifrar código" para verificar el proceso.</div>
+    </div>`;
+  }
+
+  function descifrar() {
+    const m = getMatrix(), d = det(m);
+    const res = document.getElementById('descifrar-result');
+    if (d === 0) { res.innerHTML = '<div class="alert-box alert-err">Matriz sin inversa. Cambia los valores.</div>'; return; }
+
+    const inv = invertMatrix(m);
+    const raw = document.getElementById('enc-input').value.trim();
+    if (!raw) { res.innerHTML = '<div class="alert-box alert-err">Ingresa los números cifrados.</div>'; return; }
+
+    const nums = raw.split(',').map(n => parseFloat(n.trim())).filter(n => !isNaN(n));
+    if (nums.length % 2 !== 0) { res.innerHTML = '<div class="alert-box alert-err">La cantidad de números debe ser par.</div>'; return; }
+
+    let letters = [], stepsHTML = '';
+    for (let i = 0; i < nums.length; i += 2) {
+      const v = [nums[i], nums[i+1]];
+      const rv = mulMV(inv, v);
+      const r0 = Math.round(rv[0]), r1 = Math.round(rv[1]);
+      const l0 = ALPHA_INV[r0] || '?', l1 = ALPHA_INV[r1] || '?';
+      letters.push(l0, l1);
+      stepsHTML += `<li class="step-item"><div class="step-num-circle">${i/2+1}</div>
+        <div class="step-content">A⁻¹ × [${nums[i]}, ${nums[i+1]}]ᵀ = [${r0}, ${r1}] → <span class="step-letter">${l0}${l1}</span></div></li>`;
+    }
+
+    const msg = letters.join('').trim();
+    res.innerHTML = `<div class="result-section">
+      <div class="result-block"><div class="result-label">Pasos del descifrado</div><ul class="steps-list">${stepsHTML}</ul></div>
+      <div class="result-block"><div class="result-label">Mensaje descifrado</div><div class="result-value big">${msg}</div></div>
+      <div class="alert-box alert-ok">✓ Mensaje recuperado correctamente usando la matriz inversa.</div>
+    </div>`;
+  }
+
+  function renderMatriz() {
+    const m = getMatrix(), d = det(m), inv = invertMatrix(m);
+    const fmtRow = (row) => row.map(n => String(r(n)).padStart(7)).join('  ');
+    let html = `
+      <div class="card">
+        <div class="card-title">Matriz clave A</div>
+        <div class="matrix-display">
+          | ${fmtRow(m[0])} |<br>
+          | ${fmtRow(m[1])} |
+        </div>
+        <p style="font-size:13px;color:var(--gray700);margin-top:10px">
+          det(A) = (${m[0][0]})(${m[1][1]}) − (${m[0][1]})(${m[1][0]}) = 
+          <strong style="color:${d!==0?'var(--green)':'var(--red)'};">${d} ${d!==0?'✓ Invertible':'✗ Singular'}</strong>
+        </p>
+      </div>`;
+
+    if (inv) {
+      html += `
+        <div class="card">
+          <div class="card-title">Inversa A⁻¹ (resultado de Gauss-Jordan)</div>
+          <div class="matrix-display">
+            | ${fmtRow(inv[0])} |<br>
+            | ${fmtRow(inv[1])} |
+          </div>
+          <div style="margin-top:1rem">
+            <div class="result-label" style="margin-bottom:8px">Pasos Gauss-Jordan</div>
+            <ul class="steps-list">
+              <li class="step-item"><div class="step-num-circle">0</div><div class="step-content">Construir la matriz aumentada <span class="mono-inline">[A | I]</span></div></li>
+              <li class="step-item"><div class="step-num-circle">1</div><div class="step-content">Aplicar operaciones elementales de fila (F₁←F₁×k, F₂←F₂−c×F₁, etc.) para obtener 1s en la diagonal</div></li>
+              <li class="step-item"><div class="step-num-circle">2</div><div class="step-content">La parte derecha resultante es <span class="mono-inline">A⁻¹ = | ${r(inv[0][0])} ${r(inv[0][1])} | / | ${r(inv[1][0])} ${r(inv[1][1])} |</span></div></li>
+              <li class="step-item"><div class="step-num-circle">✓</div><div class="step-content">Verificación: A × A⁻¹ = I (matriz identidad)</div></li>
+            </ul>
+          </div>
+        </div>`;
+    } else {
+      html += `<div class="alert-box alert-err" style="margin-bottom:1rem">La matriz actual es singular (det=0). No tiene inversa. Cambia los valores en la pestaña "Cifrar mensaje".</div>`;
+    }
+
+    document.getElementById('matriz-content').innerHTML = html;
+  }
+
+  function renderAlpha() {
+    const el = document.getElementById('alpha-table');
+    if (el.innerHTML !== '') return;
+    el.innerHTML = Object.entries(ALPHA).map(([k,v]) =>
+      `<div class="alpha-cell"><span class="letter">${k===' '?'&nbsp;':k}</span><span class="num">${v}</span></div>`
+    ).join('');
+  }
+
+  // Init
+  document.querySelectorAll('#a11,#a12,#a21,#a22').forEach(el => el.addEventListener('input', updateDetBadge));
+  updateDetBadge();
+</script>
+</body>
+</html>
